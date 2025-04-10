@@ -1,1 +1,1 @@
-![Img Not Found](img\database_diagram.png)
+![Img Not Found](img/database_diagram.png)
