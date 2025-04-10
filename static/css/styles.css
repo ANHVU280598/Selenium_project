@@ -1,0 +1,25 @@
+/* static/css/styles.css */
+body {
+    background-color: #f0f0f0; /* Light gray background */
+    color: #333; /* Dark text color */
+}
+
+h1 {
+    color: #1D4ED8; /* Blue color for headings */
+    font-size: 36px;
+    text-align: center;
+    margin-top: 50px;
+}
+
+button {
+    background-color: #34D399; /* Green background */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #10B981; /* Darker green on hover */
+}
