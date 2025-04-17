@@ -12,3 +12,6 @@ def test_add_sop(db):
     result = db.add_sop("SA6117")
     assert result == True, f'SOP already existed'
     
+def test_get_sop(db):
+    result = db.get_sops
+    assert result, f'Not found any SOP'

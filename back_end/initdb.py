@@ -17,14 +17,14 @@ CREATE TABLE IF NOT EXISTS Setup (
     SetupId INTEGER PRIMARY KEY,
     SopId INTEGER,
     SetupType TEXT CHECK(SetupType IN ('initial', 'final')),
-    FOREIGN KEY (SopId) REFERENCES Sop(SopId)
-)
+    FOREIGN KEY (SopId) REFERENCES Sop(SopId) ON DELETE CASCADE
+);
 ''')
 
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS Action (
     ActionId INTEGER PRIMARY KEY,
-    ActionName TEXT NOT NULL
+    ActionName TEXT NOT NULL UNIQUE
 )
 ''')
 
@@ -37,9 +37,9 @@ CREATE TABLE IF NOT EXISTS Step (
     XPath TEXT,
     Text TEXT,
     Timeout INTEGER,
-    FOREIGN KEY (SetupId) REFERENCES Setup(SetupId),
+    FOREIGN KEY (SetupId) REFERENCES Setup(SetupId) ON DELETE CASCADE,
     FOREIGN KEY (ActionId) REFERENCES Action(ActionId)
-)
+);
 ''')
 
 # Commit the changes and close the connection
