@@ -7,10 +7,15 @@ interface Sop {
   id: number;
   name: string;
 }
+interface ActionName{
+  id: number;
+  name: string;
+}
 
 interface SopsState {
   list: Sop[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  actionNameList: ActionName[];
   error: string | null;
 }
 
@@ -32,18 +37,25 @@ export const delSop = createAsyncThunk('sops/delsop', async (oldSop: { sop_name:
   dispatch(fetchSops());
 })
 
+export const fetchActionName = createAsyncThunk('sops/fetchActionName', async () => {
+  const res = await axios.get(`${API_BASE}/get_action`)
+  return res.data
+})
+
 const sopsSlice = createSlice({
   name: 'sops',
   initialState: {
     list: [],
     status: 'idle',
     error: null,
+    actionNameList: []
   } as SopsState,
   reducers: {
 
   },
   extraReducers: (builder) => {
     builder
+// Fetch Sops Name
       .addCase(fetchSops.pending, (state) => {
         state.status = 'loading';
       })
@@ -54,8 +66,21 @@ const sopsSlice = createSlice({
       .addCase(fetchSops.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || 'Failed to fetch SOPs';
+      })
+// Fecth Action Name
+      .addCase(fetchActionName.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchActionName.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.actionNameList = action.payload;
+      })
+      .addCase(fetchActionName.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Failed to fetch SOPs';
       });
   },
+  
 });
 
 

@@ -13,8 +13,7 @@ export default function ActionMenu({ actionName }: ActionMenuProps) {
     return (
         <div className="flex justify-center items-center h-full">
             <div className="text-md">
-                {actionName}
-                {/* <select
+                <select
                     id="actionType"
                     value={selectedAction}
                     onChange={(e) => setSelectedAction(e.target.value)}
@@ -25,7 +24,7 @@ export default function ActionMenu({ actionName }: ActionMenuProps) {
                             {action}
                         </option>
                     ))}
-                </select> */}
+                </select>
             </div>
         </div>
 

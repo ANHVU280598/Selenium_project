@@ -218,6 +218,13 @@ class DB:
         conn.close()
         return result
 
+    def delete_step(self, stepOrder, setupId):
+        conn = self._connect()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM Step WHERE StepOrder = ? AND SetupId = ?", (stepOrder, setupId))
+        conn.commit()
+        print(f"Delete SetupId: {setupId} & StepOrder: {stepOrder} successfull")
+
 # db = DB()
 
 # db.add_action('click')
