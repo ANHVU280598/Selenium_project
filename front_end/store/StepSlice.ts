@@ -4,31 +4,44 @@ import axios from 'axios';
 const API_BASE = 'http://localhost:5000/api'; // Adjust as needed
 
 export interface Step {
-  StepOrder: number;
-  ActionId: string;
-  XPath: string;
+  stepOrder: number;
+  actionId: string;
+  actionName: string;
+  xPath: string;
   folder_path: string;
   file_name: string;
-  Text: string;
-  ActionName: string;
+  text: string;
 }
 export const clearedStep: Step = {
-  StepOrder: 0,
-  ActionId: '',
-  XPath: '',
+  stepOrder: 0,
+  actionId: '',
+  xPath: '',
   folder_path: '',
   file_name: '',
-  Text: '',
-  ActionName: ''
+  text: '',
+  actionName: ''
 };
 
 interface StepState {
   sop_name: string;
   setUpType: 'initial' | 'final';
   list_step: Step[];
+  actionName: string;
+  text: string;
+  folder_path: string;
+  file_name: string;
+  xPath: string;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
-  actionList: string[];
+  stepObj: {
+    stepOrder: number;
+    actionId: string;
+    actionName: string;
+    xPath: string;
+    folder_path: string;
+    file_name: string;
+    text: string;
+  }
 }
 
 // POST to get all steps with given sop_id and setup_type
@@ -52,20 +65,51 @@ const stepsSlice = createSlice({
     sop_name: '',
     setUpType: 'initial',
     list_step: [],
+    actionName: 'open',
+    text: '',
+    folder_path: '',
+    file_name: '',
+    xPath: '',
     status: 'idle',
     error: null,
-    actionList: []
+    stepObj: {
+      stepOrder: 0,
+      actionId: '',
+      actionName: '',
+      xPath: '',
+      folder_path: '',
+      file_name: '',
+      text: ''
+    }
   } as StepState,
   reducers: {
     setSelectedSop(state, action: PayloadAction<string>){
       state.sop_name = action.payload
     },
-    setSteps: (state, action: PayloadAction<Step[]>)=>{
-      state.list_step = action.payload
-    },
     setSetUpType: (state, action: PayloadAction<'initial' | 'final'>)=>{
       state.setUpType = action.payload;
     },
+    setSteps: (state, action: PayloadAction<Step[]>)=>{
+      state.list_step = action.payload
+    },
+    addStep: (state, action: PayloadAction<Step>)=>{
+      state.list_step.push(action.payload)
+    },
+    setActionName: (state, action: PayloadAction<string>)=>{
+      state.actionName = action.payload;
+    },
+    setText: (state, action: PayloadAction<string>)=>{
+      state.text = action.payload
+    },
+    setFolderPath: (state, action: PayloadAction<string>)=>{
+      state.folder_path = action.payload
+    },
+    setFileName: (state, action: PayloadAction<string>)=>{
+      state.file_name = action.payload
+    },
+    setXPath: (state, action: PayloadAction<string>)=>{
+      state.xPath = action.payload
+    },  
     clearSteps: (state) => {
       state.list_step = [];
     },
@@ -94,5 +138,5 @@ const stepsSlice = createSlice({
 });
 
 
-export const {setSteps, setSelectedSop, setSetUpType} = stepsSlice.actions;
+export const {setSelectedSop, setSetUpType, setSteps, addStep, setActionName, setText, setFolderPath, setFileName, setXPath} = stepsSlice.actions;
 export default stepsSlice.reducer;

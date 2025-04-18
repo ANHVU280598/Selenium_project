@@ -1,27 +1,33 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { setActionName, Step } from '@/store/StepSlice';
 
-const actionOptions = ['CLICK', 'SEND_KEYS', 'UPLOAD', 'WAIT', 'NAVIGATE'];
+interface Props {
+    tempStepAdd: Step;
+    setTempStepAdd: React.Dispatch<React.SetStateAction<Step>>;
+}
 
-interface ActionMenuProps {
-    actionName: string;
-  }
+export default function ActionMenu({ tempStepAdd, setTempStepAdd }: Props) {
+    const actionNameList = useAppSelector((state) => state.sop.actionNameList)
+    const dispatch = useAppDispatch()
 
-export default function ActionMenu({ actionName }: ActionMenuProps) {
-    const [selectedAction, setSelectedAction] = useState('CLICK'); // default is CLICK
-
+    const handlingActionMenu = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setTempStepAdd(prev => ({ ...prev, actionName: e.target.value }))
+        dispatch(setActionName(e.target.value))
+        // setTempStepAdd(prev => ({ ...prev, folder_path: '', file_name: '', text: '' }))
+    }
     return (
         <div className="flex justify-center items-center h-full">
             <div className="text-md">
                 <select
                     id="actionType"
-                    value={selectedAction}
-                    onChange={(e) => setSelectedAction(e.target.value)}
+                    value={tempStepAdd.actionName}
+                    onChange={handlingActionMenu}
                     className=" text-center w-full text-md"
                 >
-                    {actionOptions.map((action) => (
-                        <option key={action} value={action} className="text-md">
-                            {action}
+                    {actionNameList.map((action) => (
+                        <option key={action.id} value={action.name} className="text-md">
+                            {action.name}
                         </option>
                     ))}
                 </select>

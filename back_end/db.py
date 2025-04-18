@@ -227,6 +227,7 @@ class DB:
 
 # db = DB()
 
+# db.add_action('open')
 # db.add_action('click')
-# db.add_action('send_keys')
+# db.add_action('upload')
 # db.add_step('SA6117', 'initial', 'open', 1, '//test', 'NA', 10)

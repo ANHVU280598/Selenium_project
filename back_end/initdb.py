@@ -36,6 +36,8 @@ CREATE TABLE IF NOT EXISTS Step (
     ActionId INTEGER,
     XPath TEXT,
     Text TEXT,
+    Folder_Path TEXT,
+    File_Path TEXT,
     Timeout INTEGER,
     FOREIGN KEY (SetupId) REFERENCES Setup(SetupId) ON DELETE CASCADE,
     FOREIGN KEY (ActionId) REFERENCES Action(ActionId)

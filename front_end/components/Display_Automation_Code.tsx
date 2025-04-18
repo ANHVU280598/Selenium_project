@@ -10,10 +10,10 @@ export default function Display_Automation_Code({step} : StepMenuProps ) {
     const [isEdit, setEdit] = useState(false)
     return (
         <tr>
-            <td className="border px-4 py-2 text-center">{step.StepOrder}</td>
-            <td className="border px-4 py-2 text-center">{step.ActionName}</td>
-            <td className="border px-4 py-2 text-center">{step.XPath}</td>
-            <td className="border px-4 py-2 text-center">{step.Text}</td>
+            <td className="border px-4 py-2 text-center">{step.stepOrder}</td>
+            <td className="border px-4 py-2 text-center">{step.actionName}</td>
+            <td className="border px-4 py-2 text-center">{step.xPath}</td>
+            <td className="border px-4 py-2 text-center">{step.text}</td>
             <td className="border px-4 py-2 text-center">
                 {
                     (isEdit) ? <div className='flex flex-row'>

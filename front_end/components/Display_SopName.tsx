@@ -1,13 +1,13 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { delSop, fetchSops, postSop } from '../store/sopSlice'; // Make sure the filename matches
+import { delSop, fetchActionName, fetchSops, postSop } from '../store/sopSlice'; // Make sure the filename matches
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { setSelectedSop } from '@/store/StepSlice';
 
 export default function DisplaySop() {
   const [sopName, setSopName] = useState('')
   const dispatch = useAppDispatch();
-  const { list, status, error} = useAppSelector((state) => state.sop);
+  const { list, status_sop, error} = useAppSelector((state) => state.sop);
   const sop_name = useAppSelector((state) => state.steps.sop_name)
 
   const handle_add_action = () => {
@@ -20,10 +20,11 @@ export default function DisplaySop() {
 
   useEffect(() => {
     dispatch(fetchSops());
+    dispatch(fetchActionName())
   }, [dispatch]);
 
-  if (status === 'loading') return <div>Loading SOPs...</div>;
-  if (status === 'failed') return <div>Error: {error}</div>;
+  if (status_sop === 'loading') return <div>Loading SOPs...</div>;
+  if (status_sop === 'failed') return <div>Error: {error}</div>;
 
   return (
     <div className='grid grid-cols-8 gap-4 items-center justify-center'>

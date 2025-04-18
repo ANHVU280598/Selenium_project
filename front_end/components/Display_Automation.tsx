@@ -8,22 +8,23 @@ import { fetchAllStep, setSetUpType } from '@/store/StepSlice';
 import { Step } from '@/store/StepSlice';
 import Display_Automation_Code from './Display_Automation_Code';
 import { clearedStep } from '@/store/StepSlice';
+import { fetchActionName } from '@/store/sopSlice';
 
 export default function Display_Automation() {
   const dispatch = useAppDispatch()
   const [isEdit, setEdit] = useState(false)
   const [addStep, isAddStep] = useState(false)
-  const [tempAdd, setTempAdd] = useState<Step>({
-    StepOrder: 0,
-    ActionId: '',
-    XPath: '',
+  const [tempStepAdd, setTempStepAdd] = useState<Step>({
+    stepOrder: 0,
+    actionId: '',
+    xPath: '',
     folder_path: '',
     file_name: '',
-    Text: '',
-    ActionName: '',
+    text: '',
+    actionName: '',
   });
   
-  const { sop_name, setUpType } = useAppSelector((state) => state.steps)
+  const { sop_name, setUpType} = useAppSelector((state) => state.steps)
   const { list_step, status, error } = useAppSelector((state) => state.steps)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setSetUpType((e.target.value as 'initial' | 'final')));
@@ -32,16 +33,16 @@ export default function Display_Automation() {
   useEffect(() => {
     if (sop_name) {
       dispatch(fetchAllStep({ sop_name, setup_type: setUpType }));
-      setTempAdd(clearedStep)
+      setTempStepAdd(clearedStep)
       isAddStep(false)
     }
   }, [dispatch, sop_name, setUpType]);
 
   const addNewStepBtn = () => {
     if (status === 'succeeded') {
-      setTempAdd(prev => ({
+      setTempStepAdd(prev => ({
         ...prev,
-        StepOrder: list_step.length + 1
+        stepOrder: list_step.length + 1
       }));
       isAddStep(true)
     }
@@ -97,16 +98,16 @@ export default function Display_Automation() {
         <tbody>
           {
             list_step.map((step) => (
-              <Display_Automation_Code key={step.StepOrder + step.ActionName + sop_name} step={step} />
+              <Display_Automation_Code key={step.stepOrder + step.actionName + sop_name} step={step} />
             ))
           }
           {
             (addStep) ?
               <tr>
-                <td className="border px-4 py-2 text-center">{tempAdd.StepOrder}</td>
-                <td className="border px-4 py-2 text-center"><ActionMenu/></td>
-                <td className="border px-4 py-2 text-center"><XpathMenu /></td>
-                <td className="border px-4 py-2 text-center"><TextMenu /></td>
+                <td className="border px-4 py-2 text-center">{tempStepAdd.stepOrder}</td>
+                <td className="border px-4 py-2 text-center"><ActionMenu  tempStepAdd={tempStepAdd} setTempStepAdd={setTempStepAdd} /></td>
+                <td className="border px-4 py-2 text-center"><XpathMenu  setTempStepAdd={setTempStepAdd}/></td>
+                <td className="border px-4 py-2 text-center"><TextMenu   setTempStepAdd={setTempStepAdd}/></td>
                 <td className="border px-4 py-2 text-center">
                   {
                     (isEdit) ? <div className='flex flex-row'>

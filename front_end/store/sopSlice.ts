@@ -14,6 +14,7 @@ interface ActionName{
 
 interface SopsState {
   list: Sop[];
+  status_sop: 'idle' | 'loading' | 'succeeded' | 'failed';
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   actionNameList: ActionName[];
   error: string | null;
@@ -46,6 +47,7 @@ const sopsSlice = createSlice({
   name: 'sops',
   initialState: {
     list: [],
+    status_sop: 'idle',
     status: 'idle',
     error: null,
     actionNameList: []
@@ -57,14 +59,14 @@ const sopsSlice = createSlice({
     builder
 // Fetch Sops Name
       .addCase(fetchSops.pending, (state) => {
-        state.status = 'loading';
+        state.status_sop = 'loading';
       })
       .addCase(fetchSops.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status_sop = 'succeeded';
         state.list = action.payload;
       })
       .addCase(fetchSops.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status_sop = 'failed';
         state.error = action.error.message || 'Failed to fetch SOPs';
       })
 // Fecth Action Name
