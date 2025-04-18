@@ -4,46 +4,44 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import ActionMenu from './Action_Menu';
 import TextMenu from './Text_Menu';
 import XpathMenu from './Xpath_Menu';
-import { fetchAllStep, setSetUpType } from '@/store/StepSlice';
+import { addNewStep, addNewStepToList, fetchAllStep, refreshStep, resetStepObj, setSetUpType, setStepObjField } from '@/store/StepSlice';
 import { Step } from '@/store/StepSlice';
 import Display_Automation_Code from './Display_Automation_Code';
-import { clearedStep } from '@/store/StepSlice';
 import { fetchActionName } from '@/store/sopSlice';
 
 export default function Display_Automation() {
   const dispatch = useAppDispatch()
   const [isEdit, setEdit] = useState(false)
   const [addStep, isAddStep] = useState(false)
-  const [tempStepAdd, setTempStepAdd] = useState<Step>({
-    stepOrder: 0,
-    actionId: '',
-    xPath: '',
-    folder_path: '',
-    file_name: '',
-    text: '',
-    actionName: '',
-  });
-  
-  const { sop_name, setUpType} = useAppSelector((state) => state.steps)
-  const { list_step, status, error } = useAppSelector((state) => state.steps)
+  const sop_name = useAppSelector((state) => state.steps.sop_name)
+  const setUpType = useAppSelector((state) => state.steps.setUpType)
+  const refreshListStep = useAppSelector((state) => state.steps.refreshListStep)
+  const { list_step, status, error, stepObj } = useAppSelector((state) => state.steps)
+  const stepOrder = useAppSelector(state => state.steps.stepObj.stepOrder)
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setSetUpType((e.target.value as 'initial' | 'final')));
   };
 
+  const addNewStepToDB = () => {
+    dispatch(addNewStep({sop_name: sop_name, setUpType: setUpType , step: stepObj})) 
+    dispatch(addNewStepToList(stepObj))   
+    dispatch(resetStepObj())
+    dispatch(setStepObjField({key: 'stepOrder', value: list_step.length + 1}))
+    console.log(stepOrder);
+    
+  }
   useEffect(() => {
     if (sop_name) {
       dispatch(fetchAllStep({ sop_name, setup_type: setUpType }));
-      setTempStepAdd(clearedStep)
+      dispatch(resetStepObj())
       isAddStep(false)
     }
-  }, [dispatch, sop_name, setUpType]);
+  }, [dispatch, sop_name, setUpType, refreshListStep]);
 
   const addNewStepBtn = () => {
     if (status === 'succeeded') {
-      setTempStepAdd(prev => ({
-        ...prev,
-        stepOrder: list_step.length + 1
-      }));
+      dispatch(setStepObjField({key: 'stepOrder', value: list_step.length + 1}))
       isAddStep(true)
     }
   }
@@ -97,21 +95,21 @@ export default function Display_Automation() {
         </thead>
         <tbody>
           {
-            list_step.map((step) => (
-              <Display_Automation_Code key={step.stepOrder + step.actionName + sop_name} step={step} />
+            list_step.map((step, index) => (
+              <Display_Automation_Code key={step.stepOrder + step.actionName + sop_name} step={step} index = {index}/>
             ))
           }
           {
             (addStep) ?
-              <tr>
-                <td className="border px-4 py-2 text-center">{tempStepAdd.stepOrder}</td>
-                <td className="border px-4 py-2 text-center"><ActionMenu  tempStepAdd={tempStepAdd} setTempStepAdd={setTempStepAdd} /></td>
-                <td className="border px-4 py-2 text-center"><XpathMenu  setTempStepAdd={setTempStepAdd}/></td>
-                <td className="border px-4 py-2 text-center"><TextMenu   setTempStepAdd={setTempStepAdd}/></td>
+              <tr className='bg-green-300'>
+                <td className="border px-4 py-2 text-center">{stepOrder}</td>
+                <td className="border px-4 py-2 text-center"><ActionMenu/></td>
+                <td className="border px-4 py-2 text-center"><XpathMenu/></td>
+                <td className="border px-4 py-2 text-center"><TextMenu/></td>
                 <td className="border px-4 py-2 text-center">
                   {
                     (isEdit) ? <div className='flex flex-row'>
-                      <div className='bg-green-300 p-1 rounded-l-xl hover:bg-green-300/70 cursor-pointer'>Save</div>
+                      <div className='bg-green-300 p-1 rounded-l-xl hover:bg-green-300/70 cursor-pointer' onClick={addNewStepToDB}>Save</div>
                       <div className='bg-green-300 p-1 bg-purple-300 hover:bg-purple-300/70 cursor-pointer'>Discard</div>
                       <div className='bg-red-300 p-1 rounded-r-xl hover:bg-red-300/70 cursor-pointer'>Delete</div>
                     </div>

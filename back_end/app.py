@@ -31,6 +31,21 @@ def delete_sop():
     _db.delete_sop(sop_name)
     return jsonify({ "status": "delete success", "received": data})
 
+@app.route("/api/add_step", methods=["POST"])
+def add_step():
+    data = request.json
+    print(data)
+    sop_name = data['sop_name']
+    # setUpType = data['setUpType']
+    actionName = data['actionName']
+    stepOrder = data['stepOrder']
+    xPath = data['xPath']
+    text = data['text']
+    folder_path = data['folder_path']
+    file_name = data['file_name']
+    _db.add_step(sop_name, 'initial', actionName, stepOrder, xPath, text, folder_path, file_name)
+    return jsonify({"status": "success", "received": data})
+
 @app.route("/api/get_all_step", methods=["POST"])  # Use POST if you're sending data in the body
 def get_all_step():
     data = request.get_json()
@@ -43,11 +58,12 @@ def get_all_step():
     all_steps = _db.get_all_step(sop_name, setup_type)
     return jsonify(all_steps)
 
-@app.route("/api/delete_step_order", methods=["DELETE"])  # Use POST if you're sending data in the body
+@app.route("/api/delete_step_order", methods=["DELETE"]) 
 def delete_step_order():
     data = request.get_json()
+    print(data)
     stepOrder = data.get("stepOrder")
-    setupId = data.get("setupId")
+    setupId = data.get("setUpId")
 
     if not stepOrder or not setupId:
         return jsonify({"error": "Missing step order or set up ID"}), 400

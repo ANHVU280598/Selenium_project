@@ -131,7 +131,7 @@ class DB:
         conn.commit()
         print(f"Delete {action_name} successfull")
         
-    def add_step(self, sop_name, setup_type, action_name, step_order, xpath=None, text=None, timeout=None):
+    def add_step(self, sop_name, setup_type, action_name, step_order, xpath=None, text=None, folder_path =None, file_name = None, timeout=None):
         try:
             conn = self._connect()
             cur = conn.cursor()
@@ -162,9 +162,9 @@ class DB:
 
             # 4. Insert the step
             cur.execute('''
-                INSERT INTO Step (StepOrder, SetupId, ActionId, XPath, Text, Timeout)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (step_order, setup_id, action_id, xpath, text, timeout))
+                INSERT INTO Step (StepOrder, SetupId, ActionId, XPath, Text, Folder_Path, File_Path, Timeout)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (step_order, setup_id, action_id, xpath, text, folder_path, file_name,  timeout))
 
             conn.commit()
             return "Step added successfully"
@@ -204,7 +204,7 @@ class DB:
         
         # Join Step and Action to get ActionName
         cur.execute("""
-            SELECT Step.StepId, Step.StepOrder, Step.XPath, Step.Text, Step.Timeout, 
+            SELECT Step.StepId, Step.StepOrder, Step.SetupId, Step.ActionId, Step.XPath, Step.Folder_Path, Step.File_Path, Step.Text, Step.Timeout, 
                 Action.ActionName
             FROM Step
             JOIN Action ON Step.ActionId = Action.ActionId
@@ -222,6 +222,15 @@ class DB:
         conn = self._connect()
         cur = conn.cursor()
         cur.execute("DELETE FROM Step WHERE StepOrder = ? AND SetupId = ?", (stepOrder, setupId))
+
+
+        # Step 2: Update the StepOrder of subsequent steps
+        cur.execute("""
+            UPDATE Step
+            SET StepOrder = StepOrder - 1
+            WHERE StepOrder > ? AND SetupId = ?
+        """, (stepOrder, setupId))
+
         conn.commit()
         print(f"Delete SetupId: {setupId} & StepOrder: {stepOrder} successfull")
 

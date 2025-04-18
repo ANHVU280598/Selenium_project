@@ -1,32 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { Step } from '@/store/StepSlice';
+import { setStepObjField } from '@/store/StepSlice';
 
-interface Props {
-    setTempStepAdd: React.Dispatch<React.SetStateAction<Step>>;
-  }
-export default function TextMenu({setTempStepAdd}:Props) {
-    const step = useAppSelector((state)=>state.steps)
+export default function TextMenu() {
+    const dispatch = useAppDispatch()
+    const obj_step = useAppSelector(state => state.steps.stepObj)
+    const actionName = useAppSelector((state) => state.steps.stepObj.actionName)
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setTempStepAdd(prev => ({...prev, file_name: file.name}))
+            dispatch(setStepObjField({key: 'file_name', value: file.name}))
         }
     }
     const handleFolderChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         const folder = e.target.value
-        setTempStepAdd(prev => ({...prev, folder_path: folder}))
+        dispatch(setStepObjField({key: 'folder_path', value: folder}))
     }
 
     const handleTextChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         const text = e.target.value
-        setTempStepAdd(prev => ({...prev, Text: text}))
+        dispatch(setStepObjField({key: 'text', value: text}))
+    
+        
     }
     return (
         <div className="">
             {
-                (step.actionName == "upload") ?
+                (actionName == "upload") ?
                     <div className='flex items-center justify-center w-full'>
                         <input className='w-[100px] text-xs bg-white rounded-full p-1' placeholder='Folder Path' onChange={handleFolderChange} required/>
                         <input
