@@ -27,7 +27,7 @@ export default function Display_Automation() {
     dispatch(addNewStep({sop_name: sop_name, setUpType: setUpType , step: stepObj})) 
     dispatch(addNewStepToList(stepObj))   
     dispatch(resetStepObj())
-    dispatch(setStepObjField({key: 'stepOrder', value: list_step.length + 1}))
+    dispatch(setStepObjField({key: 'stepOrder', value: stepOrder + 1}))
     console.log(stepOrder);
     
   }
