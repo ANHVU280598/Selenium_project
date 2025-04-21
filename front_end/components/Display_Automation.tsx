@@ -26,10 +26,7 @@ export default function Display_Automation() {
   const addNewStepToDB = () => {
     dispatch(addNewStep({sop_name: sop_name, setUpType: setUpType , step: stepObj})) 
     dispatch(addNewStepToList(stepObj))   
-    dispatch(resetStepObj())
-    dispatch(setStepObjField({key: 'stepOrder', value: stepOrder + 1}))
-    console.log(stepOrder);
-    
+    isAddStep(false)
   }
   useEffect(() => {
     if (sop_name) {
@@ -38,6 +35,8 @@ export default function Display_Automation() {
       isAddStep(false)
     }
   }, [dispatch, sop_name, setUpType, refreshListStep]);
+
+
 
   const addNewStepBtn = () => {
     if (status === 'succeeded') {

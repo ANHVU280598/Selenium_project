@@ -145,13 +145,14 @@ class DB:
             if not sop_row:
                 raise ValueError(f"SOP '{sop_name}' does not exist")
             sop_id = sop_row[0]
-
+            
             # 2. Get SetupId from sop_id and setup_type
             cur.execute("SELECT SetupId FROM Setup WHERE SopId = ? AND SetupType = ?", (sop_id, setup_type))
             setup_row = cur.fetchone()
             if not setup_row:
                 raise ValueError(f"Setup '{setup_type}' for SOP '{sop_name}' does not exist")
             setup_id = setup_row[0]
+
 
             # 3. Get ActionId from action_name
             cur.execute("SELECT ActionId FROM Action WHERE ActionName = ?", (action_name,))
@@ -168,6 +169,39 @@ class DB:
 
             conn.commit()
             return "Step added successfully"
+
+        except Exception as e:
+            return f"Error adding step: {e}"
+
+        finally:
+            conn.close()
+    
+    def update_step_value(self, stepId, actionName, xpath='None', text='None', folder_path='None', file_name='None'):
+        try:
+            conn = self._connect()
+            cur = conn.cursor()
+
+            cur.execute("SELECT ActionId FROM Action WHERE ActionName = ?", (actionName,))
+            action_row = cur.fetchone()
+            if not action_row:
+                raise ValueError(f"Action '{actionName}' does not exist")
+            action_id = action_row[0]
+            print(f'stepID {stepId}')
+            print(f'actionName {actionName}')
+            print(f'xpath {xpath}')
+            print(f'text {text}')
+            print(f'folder_path {folder_path}')
+            print(f'file_name {file_name}')
+            # 4. Update Step table
+            cur.execute("""
+                UPDATE Step
+                SET ActionId = ?, XPath = ?, Text = ?, Folder_Path = ?, File_Path = ?
+                WHERE StepId = ?
+            """, (action_id, xpath, text, folder_path, file_name, stepId))
+
+
+            conn.commit()
+            return "update step successfull"
 
         except Exception as e:
             return f"Error adding step: {e}"

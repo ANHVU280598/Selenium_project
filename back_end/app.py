@@ -34,17 +34,40 @@ def delete_sop():
 @app.route("/api/add_step", methods=["POST"])
 def add_step():
     data = request.json
-    print(data)
     sop_name = data['sop_name']
-    # setUpType = data['setUpType']
+    setUpType = data['setUpType']
     actionName = data['actionName']
     stepOrder = data['stepOrder']
     xPath = data['xPath']
     text = data['text']
     folder_path = data['folder_path']
     file_name = data['file_name']
-    _db.add_step(sop_name, 'initial', actionName, stepOrder, xPath, text, folder_path, file_name)
+    _db.add_step(sop_name, setUpType, actionName, stepOrder, xPath, text, folder_path, file_name)
     return jsonify({"status": "success", "received": data})
+
+@app.route("/api/update_step_value", methods=["POST"])
+def update_step_value():
+    data = request.json
+    required_fields = ['stepId']
+    # Validate required fields
+    if not all(field in data for field in required_fields):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    stepId = data['stepId']
+    xpath = data.get('xPath')
+    text = data.get('text')
+    folder_path = data.get('folder_path')
+    file_name = data.get('file_name')
+    actionName = data.get('actionName')
+    result = _db.update_step_value(
+        stepId=stepId,
+        actionName=actionName,
+        xpath=xpath,
+        text=text,
+        folder_path=folder_path,
+        file_name=file_name
+    )
+    return jsonify({"message": result})
 
 @app.route("/api/get_all_step", methods=["POST"])  # Use POST if you're sending data in the body
 def get_all_step():

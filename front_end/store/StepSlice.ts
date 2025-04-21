@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const API_BASE = 'http://localhost:5000/api'; // Adjust as needed
 export interface Step {
+  stepId: number;
   setUpId: number;
   stepOrder: number;
   actionId: string;
@@ -13,6 +14,7 @@ export interface Step {
   text: string;
 }
 export const clearedStep: Step = {
+  stepId: 0,
   setUpId: 0,
   stepOrder: 0,
   actionId: '',
@@ -30,6 +32,7 @@ interface StepState {
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
   stepObj: {
+    stepId: number;
     setUpId: number;
     stepOrder: number;
     actionId: string;
@@ -51,6 +54,7 @@ export const fetchAllStep = createAsyncThunk(
     const rawSteps = res.data;
     // Convert snake_case from API to camelCase used in Step
     const transformedSteps: Step[] = rawSteps.map((step: any) => ({
+      stepId: step.StepId,
       stepOrder: step.StepOrder,
       actionId: step.ActionId,
       setUpId: step.SetupId,
@@ -80,6 +84,13 @@ export const addNewStep = createAsyncThunk('sops/addStep', async ({ sop_name, se
   await axios.post(`${API_BASE}/add_step`, newStep);
 });
 
+export const updateStepValue = createAsyncThunk('sops/updateNewStepValue', async(step:Step) => {  
+  const objStep = {...step}
+  console.log(objStep);
+  
+  await axios.post(`${API_BASE}/update_step_value`, objStep )
+})
+
 
 const stepsSlice = createSlice({
   name: 'steps',
@@ -91,14 +102,15 @@ const stepsSlice = createSlice({
     status: 'idle',
     error: null,
     stepObj: {
+      stepId: 0,
       setUpId: 0,
       stepOrder: 0,
       actionId: '',
-      actionName: 'open',
-      xPath: '',
-      folder_path: '',
-      file_name: '',
-      text: ''
+      actionName: 'click',
+      xPath: 'NA',
+      folder_path: 'NA',
+      file_name: 'NA',
+      text: 'NA'
     }
   } as StepState,
   reducers: {
@@ -107,6 +119,8 @@ const stepsSlice = createSlice({
     },
     setSetUpType: (state, action: PayloadAction<'initial' | 'final'>) => {
       state.setUpType = action.payload;
+      console.log(state.setUpType);
+      
     },
     setStepObjField(
       state,
@@ -116,18 +130,20 @@ const stepsSlice = createSlice({
     },
     resetStepObj(state) {
       state.stepObj = {
+        stepId: 0,
         stepOrder: 0,
-        actionId: '',
+        actionId: 'NA',
         setUpId:0,
-        actionName: 'open',
-        xPath: '',
-        folder_path: '',
-        file_name: '',
-        text: ''
+        actionName: 'click',
+        xPath: 'NA',
+        folder_path: 'NA',
+        file_name: 'NA',
+        text: 'NA'
       };
     },
     addNewStepToList(state, action: PayloadAction<Step>){
       state.list_step.push(action.payload)
+      resetStepObj()
     },
     clearSteps: (state) => {
       state.list_step = [];
