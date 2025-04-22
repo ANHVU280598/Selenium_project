@@ -1,0 +1,90 @@
+swagger: "2.0"
+info:
+  title: SOP Management API
+  version: "1.0"
+basePath: /api
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+
+paths:
+  /get_sop:
+    get:
+      summary: Get all sop names
+      description: Returns a list of SOP names
+      responses:
+        200:
+          description: List of SOP names
+          schema:
+            type: array
+            items:
+              type: string
+          examples:
+            application/json: ["SA6118", "SA6293"]
+
+  /get_action:
+    get:
+      summary: Get all action name
+      description: Returns a list of Action names
+      responses:
+        200:
+          description: List of Action names
+          schema:
+            type: array
+            items:
+              type: string
+            examples:
+            application.json: ["open", "click"]
+
+  /delete_sop:
+    delete:
+      summary: Delete SOP
+      description: Delete all data relate to the SOP
+    parameters:
+      - in: body
+        name: dataObj
+        required: true
+        schema:
+          type: object
+          required:
+            - sop_name
+          properties:
+            sop_name:
+              type: string
+              example: 'SA6118'
+    response:
+      200:
+        description: Name of SOP were deleted
+
+definitions:
+  StepObject:
+    type: object
+    required:
+      - sop_name
+      - setUpType
+      - actionName
+      - stepOrder
+      - xPath
+      - text
+      - folder_path
+      - file_name
+    properties:
+      sop_name:
+        type: string
+      setUpType:
+        type: string
+      actionName:
+        type: string
+      stepOrder:
+        type: integer
+      xPath:
+        type: string
+      text:
+        type: string
+      folder_path:
+        type: string
+      file_name:
+        type: string

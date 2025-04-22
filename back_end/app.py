@@ -1,9 +1,11 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flasgger import Swagger
 from db import DB
 
 
 app = Flask(__name__)
+swagger = Swagger(app, template_file='swagger/full_api.yml')
 CORS(app)  # Enable CORS for React frontend
 _db = DB()
 
@@ -11,13 +13,6 @@ _db = DB()
 def get_sop_name():
     sops_name = _db.get_sops()
     return jsonify(sops_name)
-
-@app.route("/api/add_sop", methods=["POST"])
-def add_sop():
-    data = request.json
-    sop_name = data['sop_name']
-    _db.add_sop(sop_name)
-    return jsonify({"status": "success", "received": data})
 
 @app.route("/api/get_action", methods=["GET"])
 def get_action():
@@ -30,6 +25,13 @@ def delete_sop():
     sop_name = data['sop_name']
     _db.delete_sop(sop_name)
     return jsonify({ "status": "delete success", "received": data})
+
+@app.route("/api/add_sop", methods=["POST"])
+def add_sop():
+    data = request.json
+    sop_name = data['sop_name']
+    _db.add_sop(sop_name)
+    return jsonify({"status": "success", "received": data})
 
 @app.route("/api/add_step", methods=["POST"])
 def add_step():
