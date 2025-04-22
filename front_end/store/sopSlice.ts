@@ -13,10 +13,10 @@ interface ActionName{
 }
 
 interface SopsState {
-  list: Sop[];
-  status_sop: 'idle' | 'loading' | 'succeeded' | 'failed';
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  sopList: Sop[];
   actionNameList: ActionName[];
+  status_sop: 'idle' | 'loading' | 'succeeded' | 'failed';
+  status_actionName: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }
 
@@ -37,7 +37,7 @@ export const delSop = createAsyncThunk('sops/delsop', async (oldSop: { sop_name:
   await axios.delete(`${API_BASE}/delete_sop`, {data: oldSop});
   dispatch(fetchSops());
 })
-
+// GET ActionName
 export const fetchActionName = createAsyncThunk('sops/fetchActionName', async () => {
   const res = await axios.get(`${API_BASE}/get_action`)
   return res.data
@@ -46,11 +46,11 @@ export const fetchActionName = createAsyncThunk('sops/fetchActionName', async ()
 const sopsSlice = createSlice({
   name: 'sops',
   initialState: {
-    list: [],
+    sopList: [],
+    actionNameList: [],
     status_sop: 'idle',
-    status: 'idle',
+    status_actionName: 'idle',
     error: null,
-    actionNameList: []
   } as SopsState,
   reducers: {
 
@@ -63,7 +63,7 @@ const sopsSlice = createSlice({
       })
       .addCase(fetchSops.fulfilled, (state, action) => {
         state.status_sop = 'succeeded';
-        state.list = action.payload;
+        state.sopList = action.payload;
       })
       .addCase(fetchSops.rejected, (state, action) => {
         state.status_sop = 'failed';
@@ -71,14 +71,14 @@ const sopsSlice = createSlice({
       })
 // Fecth Action Name
       .addCase(fetchActionName.pending, (state) => {
-        state.status = 'loading';
+        state.status_actionName = 'loading';
       })
       .addCase(fetchActionName.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status_actionName = 'succeeded';
         state.actionNameList = action.payload;
       })
       .addCase(fetchActionName.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status_actionName = 'failed';
         state.error = action.error.message || 'Failed to fetch SOPs';
       });
   },

@@ -29,7 +29,7 @@ interface StepState {
   sop_name: string;
   setUpType: 'initial' | 'final';
   list_step: Step[];
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  status_steps: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
   stepObj: {
     stepId: number;
@@ -61,7 +61,7 @@ export const fetchAllStep = createAsyncThunk(
       actionName: step.ActionName,
       xPath: step.XPath,
       folder_path: step.Folder_Path,
-      file_name: step.File_Name,
+      file_name: step.File_Path,
       text: step.Text,
     }));
 
@@ -84,11 +84,8 @@ export const addNewStep = createAsyncThunk('sops/addStep', async ({ sop_name, se
   await axios.post(`${API_BASE}/add_step`, newStep);
 });
 
-export const updateStepValue = createAsyncThunk('sops/updateNewStepValue', async(step:Step) => {  
-  const objStep = {...step}
-  console.log(objStep);
-  
-  await axios.post(`${API_BASE}/update_step_value`, objStep )
+export const updateStepValue = createAsyncThunk('sops/updateNewStepValue', async(stepUpdateObject:{}) => {  
+  await axios.post(`${API_BASE}/update_step_value`, stepUpdateObject )
 })
 
 
@@ -99,7 +96,7 @@ const stepsSlice = createSlice({
     setUpType: 'initial',
     list_step: [],
     refreshListStep:false,
-    status: 'idle',
+    status_steps: 'idle',
     error: null,
     stepObj: {
       stepId: 0,
@@ -119,8 +116,6 @@ const stepsSlice = createSlice({
     },
     setSetUpType: (state, action: PayloadAction<'initial' | 'final'>) => {
       state.setUpType = action.payload;
-      console.log(state.setUpType);
-      
     },
     setStepObjField(
       state,
@@ -132,13 +127,13 @@ const stepsSlice = createSlice({
       state.stepObj = {
         stepId: 0,
         stepOrder: 0,
-        actionId: 'NA',
+        actionId: '',
         setUpId:0,
         actionName: 'click',
-        xPath: 'NA',
-        folder_path: 'NA',
-        file_name: 'NA',
-        text: 'NA'
+        xPath: '',
+        folder_path: '',
+        file_name: '',
+        text: ''
       };
     },
     addNewStepToList(state, action: PayloadAction<Step>){
@@ -159,15 +154,15 @@ const stepsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchAllStep.pending, (state) => {
-        state.status = 'loading';
+        state.status_steps = 'loading';
       })
       .addCase(fetchAllStep.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status_steps = 'succeeded';
         state.list_step = action.payload;
         console.log(state.list_step);
       })
       .addCase(fetchAllStep.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status_steps = 'failed';
         state.error = action.error.message || 'Failed to fetch SOPs';
       });
   },

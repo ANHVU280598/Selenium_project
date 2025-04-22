@@ -4,7 +4,7 @@ import { setStepObjField } from '@/store/StepSlice';
 
 export default function ActionMenu() {
     const dispatch = useAppDispatch()
-    const actionNameList = useAppSelector((state) => state.sop.actionNameList)
+    const actionNameList = useAppSelector((state) => state.sops.actionNameList)
     const actionName = useAppSelector((state) => state.steps.stepObj.actionName)
 
     const handlingActionMenu = (e: React.ChangeEvent<HTMLSelectElement>) => {

@@ -7,7 +7,6 @@ import XpathMenu from './Xpath_Menu';
 import { addNewStep, addNewStepToList, fetchAllStep, refreshStep, resetStepObj, setSetUpType, setStepObjField } from '@/store/StepSlice';
 import { Step } from '@/store/StepSlice';
 import Display_Automation_Code from './Display_Automation_Code';
-import { fetchActionName } from '@/store/sopSlice';
 
 export default function Display_Automation() {
   const dispatch = useAppDispatch()
@@ -16,7 +15,7 @@ export default function Display_Automation() {
   const sop_name = useAppSelector((state) => state.steps.sop_name)
   const setUpType = useAppSelector((state) => state.steps.setUpType)
   const refreshListStep = useAppSelector((state) => state.steps.refreshListStep)
-  const { list_step, status, error, stepObj } = useAppSelector((state) => state.steps)
+  const { list_step, status_steps, error, stepObj } = useAppSelector((state) => state.steps)
   const stepOrder = useAppSelector(state => state.steps.stepObj.stepOrder)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,23 +29,19 @@ export default function Display_Automation() {
   }
   useEffect(() => {
     if (sop_name) {
-      dispatch(fetchAllStep({ sop_name, setup_type: setUpType }));
       dispatch(resetStepObj())
+      dispatch(fetchAllStep({ sop_name, setup_type: setUpType }));
       isAddStep(false)
     }
   }, [dispatch, sop_name, setUpType, refreshListStep]);
 
-
-
   const addNewStepBtn = () => {
-    if (status === 'succeeded') {
       dispatch(setStepObjField({key: 'stepOrder', value: list_step.length + 1}))
       isAddStep(true)
-    }
   }
 
-  if (status === 'loading' && sop_name) return <div>Loading SOPs...</div>;
-  if (status === 'failed' && sop_name) return <div>Error: {error}</div>;
+  if (status_steps === 'loading' && sop_name) return <div>Loading SOPs...</div>;
+  if (status_steps === 'failed' && sop_name) return <div>Error: {error}</div>;
 
   if (!sop_name) return <span className='text-md text-gray-400'>Please select SOP</span>
   return (
@@ -107,10 +102,9 @@ export default function Display_Automation() {
                 <td className="border px-4 py-2 text-center"><TextMenu/></td>
                 <td className="border px-4 py-2 text-center">
                   {
-                    (isEdit) ? <div className='flex flex-row'>
-                      <div className='bg-green-300 p-1 rounded-l-xl hover:bg-green-300/70 cursor-pointer' onClick={addNewStepToDB}>Save</div>
-                      <div className='bg-green-300 p-1 bg-purple-300 hover:bg-purple-300/70 cursor-pointer'>Discard</div>
-                      <div className='bg-red-300 p-1 rounded-r-xl hover:bg-red-300/70 cursor-pointer'>Delete</div>
+                    (isEdit) ? <div className='flex flex-row items-center justify-center'>
+                      <div className='bg-blue-300 p-1 rounded-l-xl hover:bg-pruprle-300/70 cursor-pointer' onClick={addNewStepToDB}>Save</div>
+                      <div className='bg-green-300 p-1 rounded-r-xl  bg-purple-300 hover:bg-purple-300/70 cursor-pointer' onClick={()=>setEdit(false)}>Discard</div>
                     </div>
                       :
                       <div className='bg-purple-300 rounded-md border-1 border-black hover:bg-purple-300/70 cursor-pointer' onClick={() => setEdit(true)}>Edit</div>

@@ -131,7 +131,7 @@ class DB:
         conn.commit()
         print(f"Delete {action_name} successfull")
         
-    def add_step(self, sop_name, setup_type, action_name, step_order, xpath=None, text=None, folder_path =None, file_name = None, timeout=None):
+    def add_step(self, sop_name, setup_type, action_name, xpath=None, text=None, folder_path =None, file_name = None, timeout=None):
         try:
             conn = self._connect()
             cur = conn.cursor()
@@ -152,6 +152,9 @@ class DB:
             if not setup_row:
                 raise ValueError(f"Setup '{setup_type}' for SOP '{sop_name}' does not exist")
             setup_id = setup_row[0]
+
+            # Get Step Order
+            step_order = self.get_highest_step_order(sop_id, setup_id) + 1
 
 
             # 3. Get ActionId from action_name
@@ -252,6 +255,32 @@ class DB:
         conn.close()
         return result
 
+    def get_highest_step_order(self, sop_id, setup_id):
+        try:
+            conn = self._connect()
+            cur = conn.cursor()
+
+            query = '''
+            SELECT MAX(Step.StepOrder)
+            FROM Step
+            JOIN Setup ON Step.SetupId = Setup.SetupId
+            WHERE Setup.SopId = ? AND Step.SetupId = ?
+            '''
+            cur.execute(query, (sop_id, setup_id))
+            result = cur.fetchone()
+
+            return result[0] if result[0] is not None else 0
+
+        except sqlite3.Error as e:
+            print("Database error:", e)
+            return None
+        except Exception as e:
+            print("Unexpected error:", e)
+            return None
+        finally:
+            if 'conn' in locals():
+                conn.close()
+
     def delete_step(self, stepOrder, setupId):
         conn = self._connect()
         cur = conn.cursor()
@@ -267,10 +296,3 @@ class DB:
 
         conn.commit()
         print(f"Delete SetupId: {setupId} & StepOrder: {stepOrder} successfull")
-
-# db = DB()
-
-# db.add_action('open')
-# db.add_action('click')
-# db.add_action('upload')
-# db.add_step('SA6117', 'initial', 'open', 1, '//test', 'NA', 10)

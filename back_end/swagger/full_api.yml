@@ -43,7 +43,7 @@ paths:
     delete:
       summary: Delete SOP
       description: Delete all data relate to the SOP
-    parameters:
+      parameters:
       - in: body
         name: dataObj
         required: true
@@ -55,18 +55,104 @@ paths:
             sop_name:
               type: string
               example: 'SA6118'
-    response:
-      200:
-        description: Name of SOP were deleted
+      responses:
+        200:
+          description: Name of SOP were deleted
+
+  /add_sop:
+    post:
+      summary: Add new SOP
+      description: Add new SOP to DB by SOP name
+      parameters:
+      - in: body
+        name: dataObj
+        required: true
+        schema:
+          type: object
+          required: 
+            - sop_name
+          properties:
+            sop_name:
+              type: string
+              example: 'SA6118'
+      responses:
+        200:
+          description: Add new SOP successfull
+  
+  /add_step:
+    post:
+      summary: Add Step into an SOP.
+      description: add new step, increase the step order by existing one.
+      parameters:
+        - in: body
+          name: dataObj
+          required: true
+          schema:
+            $ref: '#/definitions/stepObject'
+      responses:
+        200:
+          description: Add Step successfull
+
+  /update_step_value:
+    post:
+      summary: Update each step key value if needed
+      description: Update step by stepId
+      parameters:
+      - in: body
+        name: dataObj
+        required: true
+        schema:
+          $ref: '#/definitions/updateStepObject'
+      responses:
+        200:
+          description: Update Step
+
+  /get_all_step:
+    post:
+      summary: Get all step from an SOP
+      description: Get all Step by sop_name and sop_type
+      parameters:
+        - in: body
+          name: dataObj
+          required: true
+          schema:
+            $ref: '#/definitions/getAllStepObject'
+      responses:
+        200:
+          description: Get all step successfull
+
+  /delete_step_order:
+    delete:
+      summary: Delete specific Step
+      description: Delete Step by stepId
+      parameters:
+        - in: body
+          name: dataObj
+          required: true
+          schema:
+            type: object
+            required:
+              - stepOrder
+              - setUpId
+            properties:
+              stepOrder:
+                  type: integer
+                  example: 1
+              setUpId:
+                  type: integer
+                  example: 1
+      responses:
+        200:
+          description: Delete step successfull
+
 
 definitions:
-  StepObject:
+  stepObject:
     type: object
     required:
       - sop_name
       - setUpType
       - actionName
-      - stepOrder
       - xPath
       - text
       - folder_path
@@ -74,17 +160,60 @@ definitions:
     properties:
       sop_name:
         type: string
+        example: 'SA6117'
       setUpType:
         type: string
+        example: 'initial'
       actionName:
         type: string
-      stepOrder:
-        type: integer
+        example: 'click'
       xPath:
         type: string
+        example: "//div[text()='']"
       text:
         type: string
+        example: 'admin'
       folder_path:
         type: string
       file_name:
         type: string
+  updateStepObject:
+    type: object
+    required: 
+      - stepId
+      - xPath
+      - text
+      - folder_path
+      - file_name
+      - actionName
+    properties:
+      stepId:
+        type: integer
+      xPath:
+        type: string
+        example: "//div123"
+      actionName:
+        type: string
+        example: "click"
+      text:
+        type: string
+        example: "password"
+      folder_path:
+        type: string
+        example: "C://"
+      file_name:
+        type: string
+        example: "SwConfigFile"
+  getAllStepObject:
+    type: object
+    required:
+      - sop_name
+      - setup_type
+    properties:
+      sop_name: 
+        type: string
+        example: "SA6118"
+      setup_type: 
+        type: string
+        example: "initial"
+

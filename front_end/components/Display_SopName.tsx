@@ -7,7 +7,7 @@ import { setSelectedSop } from '@/store/StepSlice';
 export default function DisplaySop() {
   const [sopName, setSopName] = useState('')
   const dispatch = useAppDispatch();
-  const { list, status_sop, error} = useAppSelector((state) => state.sop);
+  const { sopList, status_sop, status_actionName, error} = useAppSelector((state) => state.sops);
   const sop_name = useAppSelector((state) => state.steps.sop_name)
 
   const handle_add_action = () => {
@@ -23,8 +23,8 @@ export default function DisplaySop() {
     dispatch(fetchActionName())
   }, [dispatch]);
 
-  if (status_sop === 'loading') return <div>Loading SOPs...</div>;
-  if (status_sop === 'failed') return <div>Error: {error}</div>;
+  if (status_sop === 'loading' && status_actionName === 'loading' ) return <div>Loading SOPs...</div>;
+  if (status_sop === 'failed' && status_actionName === 'failed') return <div>Error: {error}</div>;
 
   return (
     <div className='grid grid-cols-8 gap-4 items-center justify-center'>
@@ -37,7 +37,7 @@ export default function DisplaySop() {
         </div>
       </div>
       <>
-        {list.map((sop) => (
+        {sopList.map((sop) => (
           <div className={`p-2 border-2 rounded-xl text-center hover:bg-green-400/10 cursor-pointer
             ${sop_name === sop.name ? 'bg-green-200' : ''}
             ${sop_name && sop.name !== sop_name ? 'opacity-50' : ''}

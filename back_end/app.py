@@ -39,22 +39,21 @@ def add_step():
     sop_name = data['sop_name']
     setUpType = data['setUpType']
     actionName = data['actionName']
-    stepOrder = data['stepOrder']
     xPath = data['xPath']
     text = data['text']
     folder_path = data['folder_path']
     file_name = data['file_name']
-    _db.add_step(sop_name, setUpType, actionName, stepOrder, xPath, text, folder_path, file_name)
+    _db.add_step(sop_name, setUpType, actionName, xPath, text, folder_path, file_name)
     return jsonify({"status": "success", "received": data})
 
 @app.route("/api/update_step_value", methods=["POST"])
 def update_step_value():
     data = request.json
+    print(data)
     required_fields = ['stepId']
     # Validate required fields
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Missing required fields"}), 400
-
     stepId = data['stepId']
     xpath = data.get('xPath')
     text = data.get('text')

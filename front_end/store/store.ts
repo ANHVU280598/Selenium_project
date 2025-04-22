@@ -4,7 +4,7 @@ import stepReducer from './StepSlice'
 
 export const store = configureStore({
   reducer: {
-    sop: sopReducer,
+    sops: sopReducer,
     steps: stepReducer
   },
 });
