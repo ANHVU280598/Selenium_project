@@ -25,6 +25,20 @@ paths:
           examples:
             application/json: ["SA6118", "SA6293"]
 
+  /run_code:
+    post:
+      summary: Api for run SOP
+      description: Get all Step from Db --> run
+      parameters:
+        - in: body
+          name: dataObj
+          required: true
+          schema:
+            $ref: '#/definitions/getAllStepObject'
+      responses:
+        200:
+          description: "Get All Step successfull and run it"
+        
   /get_action:
     get:
       summary: Get all action name
@@ -36,8 +50,27 @@ paths:
             type: array
             items:
               type: string
-            examples:
-            application.json: ["open", "click"]
+          examples:
+              application.json: ["open", "click"]
+
+  /add_action:
+    post:
+      summary: add action name
+      parameters:
+        - in: body
+          name: dataObj
+          required: true
+          schema:
+            type: object
+            required: 
+              - actionName
+            properties:
+              actionName:
+                type: string
+                example: 'open'
+      responses:
+        200:
+          description: Add new action successfull
 
   /delete_sop:
     delete:

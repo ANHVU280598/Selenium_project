@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import ActionMenu from './Action_Menu';
 import TextMenu from './Text_Menu';
 import XpathMenu from './Xpath_Menu';
-import { addNewStep, addNewStepToList, fetchAllStep, refreshStep, resetStepObj, setSetUpType, setStepObjField } from '@/store/StepSlice';
+import { addNewStep, addNewStepToList, fetchAllStep, refreshStep, resetStepObj, run_code, setSetUpType, setStepObjField } from '@/store/StepSlice';
 import { Step } from '@/store/StepSlice';
 import Display_Automation_Code from './Display_Automation_Code';
 
@@ -38,6 +38,10 @@ export default function Display_Automation() {
   const addNewStepBtn = () => {
       dispatch(setStepObjField({key: 'stepOrder', value: list_step.length + 1}))
       isAddStep(true)
+  }
+
+  const runCode = () => {
+      dispatch(run_code({ sop_name, setup_type: setUpType }));
   }
 
   if (status_steps === 'loading' && sop_name) return <div>Loading SOPs...</div>;
@@ -74,7 +78,7 @@ export default function Display_Automation() {
           </label>
 
           <div className='p-2 bg-green-300 rounded-lg border-1 border-black text-sm hover:bg-green-300/70 cursor-pointer' onClick={() => addNewStepBtn()}>Add New Step</div>
-          <div className='p-2 bg-green-300 rounded-lg border-1 border-black text-sm hover:bg-green-300/70 cursor-pointer'>Run Test</div>
+          <div className='p-2 bg-green-300 rounded-lg border-1 border-black text-sm hover:bg-green-300/70 cursor-pointer' onClick={()=> runCode()}>Run Test</div>
         </div>
       </div>
       <table className="table-auto border border-gray-300 text-sm w-[850px] mx-auto">

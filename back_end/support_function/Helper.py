@@ -65,7 +65,7 @@ def wait_for_element_visible(driver, xpath):
         print(f"Error: {xpath}")
     return False
 
-def __perform_action(driver, xpath, action, text=None):
+def perform_action(driver, xpath, action, text=None):
     """
     Perform an action on a web element after ensuring it's visible.
     Actions can be "ping", "get", "enter", or "click".

@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flasgger import Swagger
 from db import DB
+from runCode import RunCode
+from threading import Thread, Event
 
 
 app = Flask(__name__)
@@ -14,6 +16,24 @@ def get_sop_name():
     sops_name = _db.get_sops()
     return jsonify(sops_name)
 
+@app.route("/api/run_code", methods=["POST"])
+def run_code():
+    data = request.get_json()
+    sop_name = data.get("sop_name")
+    setup_type = data.get("setup_type")
+    if not sop_name or not setup_type:
+        return jsonify({"error": "Missing sop_name or setup_type"}), 400
+    all_steps = _db.get_all_step(sop_name, setup_type)
+
+    run = RunCode()
+
+    task = Thread()
+    task.start()
+    task_control = ['thread'] = task
+    
+    run.start(all_steps)
+
+    return jsonify({"status": "success", "received": data})
 @app.route("/api/get_action", methods=["GET"])
 def get_action():
     action_name = _db.get_actions()
@@ -39,6 +59,7 @@ def add_action():
     actionName = data['actionName']
     _db.add_action(actionName)
     return jsonify({"status": "success", "received": data})
+
 @app.route("/api/add_step", methods=["POST"])
 def add_step():
     data = request.json

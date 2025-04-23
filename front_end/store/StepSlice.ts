@@ -69,6 +69,14 @@ export const fetchAllStep = createAsyncThunk(
   }
 );
 
+export const run_code = createAsyncThunk(
+  'sops/runCode',
+  async (payload: { sop_name: string; setup_type: string }) => {
+    const res = await axios.post(`${API_BASE}/run_code`, payload);
+    return 'Run Code Success'
+  }
+);
+
 export const fetchActions = createAsyncThunk('sops/fetchActions', async () => {
   const res = await axios.get(`${API_BASE}/get_action`);
   return res.data;
