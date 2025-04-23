@@ -33,6 +33,12 @@ def add_sop():
     _db.add_sop(sop_name)
     return jsonify({"status": "success", "received": data})
 
+@app.route("/api/add_action", methods=["POST"])
+def add_action():
+    data = request.json
+    actionName = data['actionName']
+    _db.add_action(actionName)
+    return jsonify({"status": "success", "received": data})
 @app.route("/api/add_step", methods=["POST"])
 def add_step():
     data = request.json
