@@ -9,8 +9,8 @@ class RunCode():
 
         self.driver = Load_Driver.get_driver()
 
-    def start(self, listObjAction):
-        for objAction in listObjAction:
+    def start(self, all_steps):
+        for objAction in all_steps:
             action = objAction['ActionName']
             xpath = objAction['XPath']
             text = objAction['Text']

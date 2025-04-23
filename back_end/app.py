@@ -11,6 +11,8 @@ swagger = Swagger(app, template_file='swagger/full_api.yml')
 CORS(app)  # Enable CORS for React frontend
 _db = DB()
 
+stop_event = Event()
+
 @app.route("/api/get_sop", methods=["GET"])
 def get_sop_name():
     sops_name = _db.get_sops()
@@ -18,22 +20,30 @@ def get_sop_name():
 
 @app.route("/api/run_code", methods=["POST"])
 def run_code():
+    global stop_event
+    stop_event.clear()
     data = request.get_json()
     sop_name = data.get("sop_name")
     setup_type = data.get("setup_type")
     if not sop_name or not setup_type:
         return jsonify({"error": "Missing sop_name or setup_type"}), 400
+    
     all_steps = _db.get_all_step(sop_name, setup_type)
-
     run = RunCode()
 
-    task = Thread()
-    task.start()
-    task_control = ['thread'] = task
-    
-    run.start(all_steps)
+    def task_wrapper(all_steps):
+        run.start(all_steps)
 
+    task = Thread(target=task_wrapper(all_steps), args=(stop_event))
+    task.start()
     return jsonify({"status": "success", "received": data})
+
+@app.route("/api/stop_code", methods=["GET"])
+def stop_code():
+    stop_event.set()
+    print("Shutting down the current task...")
+    return jsonify({"status": "success"})
+
 @app.route("/api/get_action", methods=["GET"])
 def get_action():
     action_name = _db.get_actions()
