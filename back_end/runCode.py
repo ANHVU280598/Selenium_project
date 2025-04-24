@@ -18,5 +18,6 @@ class RunCode():
 
             if Helper.perform_action(self.driver, xpath, action, text):
                 pass
+        self.driver.close()
         print("Run Code Complete")
 

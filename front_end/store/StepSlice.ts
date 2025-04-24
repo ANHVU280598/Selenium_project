@@ -77,6 +77,12 @@ export const run_code = createAsyncThunk(
   }
 );
 
+export const stop_code = createAsyncThunk('sops/stopCode',
+  async () => {
+    const rest = await axios.get(`${API_BASE}/stop_code`)
+  }
+)
+
 export const fetchActions = createAsyncThunk('sops/fetchActions', async () => {
   const res = await axios.get(`${API_BASE}/get_action`);
   return res.data;
