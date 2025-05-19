@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { setStepObjField } from '@/store/StepSlice';
 
@@ -15,10 +15,6 @@ export default function TextMenu() {
         }
         
     }
-    const handleFolderChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        const folder = e.target.value
-        dispatch(setStepObjField({key: 'folder_path', value: folder}))
-    }
 
     const handleTextChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         const text = e.target.value
@@ -31,7 +27,6 @@ export default function TextMenu() {
             {
                 (actionName == "upload") ?
                     <div className='flex items-center justify-center w-full'>
-                        <input className='w-[100px] text-xs bg-white rounded-full p-1' placeholder='Folder Path' onChange={handleFolderChange}/>
                         <input
                             type="file"
                             onChange={handleFileChange}

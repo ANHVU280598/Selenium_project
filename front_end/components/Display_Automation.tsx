@@ -1,11 +1,10 @@
 'use client'
-import React, { use, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import ActionMenu from './Action_Menu';
 import TextMenu from './Text_Menu';
 import XpathMenu from './Xpath_Menu';
-import { addNewStep, addNewStepToList, fetchAllStep, refreshStep, resetStepObj, run_code, setSetUpType, setStepObjField, stop_code } from '@/store/StepSlice';
-import { Step } from '@/store/StepSlice';
+import { addNewStep, addNewStepToList, fetchAllStep, resetStepObj, run_code, setSetUpType, setStepObjField, stop_code } from '@/store/StepSlice';
 import Display_Automation_Code from './Display_Automation_Code';
 
 export default function Display_Automation() {
@@ -38,6 +37,9 @@ export default function Display_Automation() {
 
   const addNewStepBtn = () => {
     dispatch(setStepObjField({ key: 'stepOrder', value: list_step.length + 1 }))
+    dispatch(setStepObjField({key: 'xPath', value: ''}))
+    dispatch(setStepObjField({key: 'text', value: ''}))
+    dispatch(setStepObjField({key: 'file_name', value: ''}))
     isAddStep(true)
   }
 

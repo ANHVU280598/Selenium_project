@@ -21,16 +21,32 @@ def get_file_path(file_path):
 
     return config_file_path
 
+def search_file_path(file_name):
+    search_path = '../ConfigureFiles'
+    for root, dirs, files in os.walk(search_path):
+        if file_name in files:
+            full_path = os.path.join(root, file_name)
+            full_path = os.path.abspath(full_path)
+            print(f"full path {full_path}")
+            if os.path.exists(full_path):
+                print("File exists:", full_path)
+                return full_path
+            else:
+                print("File NOT found:", full_path)
+            
+
 def wait_for_device_webpage(driver, url, action, timeout=300, interval=5):
     """Waits for the device's default web page to be accessible."""
     start_time = time.time()
     while time.time() - start_time < timeout:
+        print(f"Wait for {url}")
         try:
-            response = requests.get(url, timeout=3)
+            response = requests.get(url, timeout=3, verify=False)
+            time.sleep(3)
             if response.status_code == 200:
                 print(f"Device page is now available: {url}")
                 if action == "ping":
-                    driver.open(url)
+                    driver.get(url)
                 elif action == "get":
                     driver.get(url)
 
@@ -82,43 +98,57 @@ def perform_action(driver, xpath, action, text=None):
         return True
     
     # Wait for the element to be visible
-
-    result = wait_for_element_presence(driver, xpath)
-    
-    if result:
-        # Handle "enter" action (send text input)
-        if action == "enter" and text:
-            result.send_keys(text)
-            print(f"Entered text: {text}")
-            return True
-        
-        # Handle "click" action
-        elif action == "click":
-            result.click()
-            print(f'Clicked the element: {xpath}')
-            return True
-        
-        elif action =="send_file":
-            print(text)
-            file_path = get_file_path(text)
-            result.send_keys(file_path)
-            return True
-        elif action =="wait":
-            if wait_for_element_visible(driver, xpath):
+    if action != 'done':
+        result = wait_for_element_presence(driver, xpath)
+        if result:
+            # Handle "enter" action (send text input)
+            if action == "enter" and text:
+                try:
+                    result = WebDriverWait(driver, 1000).until(
+                        EC.element_to_be_clickable((By.XPATH, xpath))
+                    )
+                    result.send_keys(text)
+                except Exception as e:
+                    print(f"Error occurred: {e}")
+                print(f"Entered text: {text}")
                 return True
-            else:
-                return False
+            
+            # Handle "click" action
+            elif action == "click":
+                # result.click()
+                # print(f'Clicked the element: {xpath}')
+                try:
+                    button = WebDriverWait(driver, 1000).until(
+                        EC.element_to_be_clickable((By.XPATH, xpath))
+                    )
+                    button.click()
+                    print(f"Clicked the button at {xpath}")
+                except Exception as e:
+                    print(f"Error occurred: {e}")
+                return True
+            
+            elif action =="upload":
+                print(text)
+                file_path = search_file_path(text)
+                print(f"file Path {file_path}")
+                result.send_keys(file_path)
+                return True
+            
+            
+            elif action =="wait":
+                if wait_for_element_visible(driver, xpath):
+                    return True
+            
     if action =="done":
-        print("DRIVE")
-        script = """
+        script = f"""
         let div = document.createElement('div');
-        div.innerText = 'DONE';
+        div.innerText = '{text}';
         div.style.position = 'fixed';
-        div.style.top = '50%';
-        div.style.left = '50%';
+        div.style.top = '10%';
+        div.style.left = '10%';
         div.style.transform = 'translate(-50%, -50%)';
         div.style.color = 'limegreen';
-        div.style.fontSize = '100px';
+        div.style.fontSize = '46px';
         div.style.fontFamily = 'Arial, sans-serif';
         div.style.zIndex = '9999';
         div.style.backgroundColor = 'black';

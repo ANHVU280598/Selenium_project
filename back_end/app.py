@@ -5,13 +5,37 @@ from db import DB
 from runCode import RunCode
 from threading import Thread, Event
 import threading
+import signal
+import sys
+from werkzeug.serving import make_server
+import socket
+import sys
+
+if len(sys.argv) < 2:
+    print("Usage: python app.py <db_path>")
+    sys.exit(1)
+
+db_path = sys.argv[1]
 
 app = Flask(__name__)
 swagger = Swagger(app, template_file='swagger/full_api.yml')
 CORS(app)  # Enable CORS for React frontend
-_db = DB()
+_db = DB(db_path)
 
-stop_event = Event()
+
+# Handle shutdown signals
+def graceful_exit(sig, frame):
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, graceful_exit)   # Ctrl+C
+signal.signal(signal.SIGTERM, graceful_exit)  # taskkill /PID /F
+
+backend_process = None
+active_threads = None
+stop_flag = False
+
+def check_stop_flag():
+    return stop_flag
 
 @app.route("/api/get_sop", methods=["GET"])
 def get_sop_name():
@@ -20,29 +44,32 @@ def get_sop_name():
 
 @app.route("/api/run_code", methods=["POST"])
 def run_code():
-    global stop_event
-    stop_event.clear()
+    global active_thread, stop_flag
     data = request.get_json()
     sop_name = data.get("sop_name")
     setup_type = data.get("setup_type")
     if not sop_name or not setup_type:
         return jsonify({"error": "Missing sop_name or setup_type"}), 400
-    
-    all_steps = _db.get_all_step(sop_name, setup_type)
-    run = RunCode()
 
-    def task_wrapper(all_steps):
-        run.start(all_steps)
-        
-    task = Thread(target=task_wrapper(all_steps), args=(stop_event))
-    task.start()
+    all_steps = _db.get_all_step(sop_name, setup_type)
+    stop_flag = False
+
+    def task_wrapper(steps):
+        run = RunCode(stop_flag_ref=check_stop_flag)
+        run.start(steps)
+
+    active_thread = Thread(target=task_wrapper, args=(all_steps,))
+    active_thread.daemon = True
+    active_thread.start()
+
     return jsonify({"status": "success", "received": data})
 
 @app.route("/api/stop_code", methods=["GET"])
 def stop_code():
-    stop_event.set()
-    print("Shutting down the current task...")
-    return jsonify({"status": "success"})
+    global stop_flag
+    stop_flag = True
+    return jsonify({"status": "stop requested"})
+
 
 @app.route("/api/get_action", methods=["GET"])
 def get_action():
@@ -133,5 +160,20 @@ def delete_step_order():
     return jsonify({ "status": "delete success", "received": data})
 
 if __name__ == "__main__":
-    app.run(debug=True)
-    CORS(app)
+    host = '127.0.0.1'
+    port = 5000
+
+    http_server = make_server(host, port, app)
+    http_server.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+    print(f"Starting Flask server at http://{host}:{port}")
+    try:
+        http_server.serve_forever()
+    except KeyboardInterrupt:
+        print("Shutting down server.")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+    finally:
+        http_server.server_close()
+        print("Socket closed.")
+        sys.exit(0)

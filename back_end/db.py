@@ -1,13 +1,16 @@
 import sqlite3
+import os
 
 class DB:
-    def __init__(self, db_path="data/automation_app.db"):
+    def __init__(self, db_path):
         self.db_path = db_path
         self._initialize_db()
 
     def _connect(self):
-        return sqlite3.connect(self.db_path)
-
+        self.conn = sqlite3.connect(self.db_path)
+        print(self.db_path)
+        return self.conn
+        
     def _initialize_db(self):
         conn = self._connect()
         cursor = conn.cursor()
@@ -73,6 +76,7 @@ class DB:
                 (sop_id, "final")
             )
         conn.commit()
+        conn.close()
         return True
     
     def add_sop(self, sop_name):
@@ -90,7 +94,8 @@ class DB:
 
     def delete_sop(self, sop_name):
         try:
-            conn = sqlite3.connect("data/automation_app.db")
+            conn = self._connect()
+            cursor = conn.cursor()
             conn.execute("PRAGMA foreign_keys = ON")
             cursor = conn.cursor()
 
@@ -133,6 +138,7 @@ class DB:
         cur.execute("DELETE FROM Action WHERE ActionName = ?", (action_name,))
         conn.commit()
         print(f"Delete {action_name} successfull")
+        conn.close()
         
     def add_step(self, sop_name, setup_type, action_name, xpath=None, text=None, folder_path =None, file_name = None, timeout=None):
         try:
@@ -167,6 +173,7 @@ class DB:
                 raise ValueError(f"Action '{action_name}' does not exist")
             action_id = action_row[0]
 
+            file_name =  os.path.basename(file_name)
             # 4. Insert the step
             cur.execute('''
                 INSERT INTO Step (StepOrder, SetupId, ActionId, XPath, Text, Folder_Path, File_Path, Timeout)
@@ -186,7 +193,8 @@ class DB:
         try:
             conn = self._connect()
             cur = conn.cursor()
-
+            file_name =  os.path.basename(file_name)
+            print(f"DAATAA {file_name}")
             cur.execute("SELECT ActionId FROM Action WHERE ActionName = ?", (actionName,))
             action_row = cur.fetchone()
             if not action_row:
@@ -298,4 +306,5 @@ class DB:
         """, (stepOrder, setupId))
 
         conn.commit()
+        conn.close()
         print(f"Delete SetupId: {setupId} & StepOrder: {stepOrder} successfull")

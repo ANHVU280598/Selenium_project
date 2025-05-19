@@ -1,9 +1,6 @@
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { delete_step_order, refreshStep, removeStepByIndex, setStepObjField, Step, updateStepValue } from '@/store/StepSlice';
+import { delete_step_order, refreshStep, removeStepByIndex, Step, updateStepValue } from '@/store/StepSlice';
 import React, { useEffect, useState } from 'react'
-import ActionMenu from './Action_Menu';
-import XpathMenu from './Xpath_Menu';
-import TextMenu from './Text_Menu';
 
 
 interface StepMenuProps {
@@ -14,9 +11,7 @@ interface StepMenuProps {
 export default function Display_Automation_Code({ step, index }: StepMenuProps) {
     const dispatch = useAppDispatch()
     const actionNameList = useAppSelector((state) => state.sops.actionNameList)
-    const actionName = useAppSelector((state) => state.steps.stepObj.actionName)
     const [isEdit, setEdit] = useState(false)
-    const stepObjField = useAppSelector((state) => state.steps.stepObj)
     const [tempObjStep, setTempObjStep] = useState({
         "actionName": "open",
         "file_name": "",
@@ -93,13 +88,6 @@ export default function Display_Automation_Code({ step, index }: StepMenuProps) 
                 }))
             }
         }
-        const handleFolderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            const folder = e.target.value
-            setTempObjStep(prev => ({
-                ...prev,
-                "folder_path": e.target.value
-            }))
-        }
         const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             setTempObjStep(prev => ({
                 ...prev,
@@ -114,7 +102,6 @@ export default function Display_Automation_Code({ step, index }: StepMenuProps) 
         }
         return ((tempObjStep.actionName == "upload") ?
             <div className='flex items-center justify-center w-full'>
-                <input className='w-[100px] text-xs bg-white rounded-full p-1' placeholder='Folder Path' onChange={handleFolderChange} />
                 <input
                     type="file"
                     onChange={handleFileChange}
