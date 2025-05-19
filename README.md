@@ -60,38 +60,40 @@ http://localhost:5000/api/docs — This opens the Swagger UI to explore availabl
 ## Project Structure
 ```bash
 Selenium_project/
-├── back_end/
-│   ├── data/automation_app.db
-│   ├── support_function
-│   │     ├── __init__.py
-│   │     ├── Helper.py
-│   │     └── Load_Driver.py
-│   ├── swagger 
-│   │   └── full_api.yml 
-│   ├── venv/      
-│   ├── app.py     
-│   ├── db.py     
-│   ├── initdb.py 
-│   ├── runCode.py     
-│   └── requirements.txt       
+├── back_end/                          # Backend application using Flask + Selenium
+│   ├── data/automation_app.db         # SQLite database used for automation storage
+│   ├── support_function/              # Python helper scripts for browser automation
+│   │   ├── __init__.py                # Marks directory as a Python module
+│   │   ├── Helper.py                  # Contains reusable helper functions
+│   │   └── Load_Driver.py             # Logic to load Selenium WebDriver
+│   ├── swagger/                       # OpenAPI specification for backend APIs
+│   │   └── full_api.yml               # YAML file describing API endpoints
+│   ├── venv/                          # Python virtual environment (should be gitignored)
+│   ├── app.py                         # Main Flask application entry point
+│   ├── db.py                          # Database connection and ORM logic
+│   ├── initdb.py                      # Script to initialize the database
+│   ├── runCode.py                     # Executes automation code logic
+│   └── requirements.txt               # Python dependencies
 │
-├── front_end/
-│   ├── app/
-│   │   ├── global.css 
-│   │   ├── layout.tsx 
-│   │   └── page.tsx    
-│   ├── components/
-│   │    ├── Action_Menu.tsx 
-│   │    ├── Display_Automation_Code.tsx 
-│   │    ├── Display_Automation.tsx 
-│   │    ├── Display_SopName.tsx 
-│   │    ├── Text_Menu.tsx
-│   │    └── Xpath_Menu.tsx          
-│   └── store/   
-│        ├── hooks.ts
-│        ├── provider.tsx
-│        ├── sopSlice.ts
-│        ├── StepSlice.ts
-│        └── store.ts          
-└── README.md    
+├── front_end/                         # Frontend application using Next.js + TypeScript
+│   ├── app/                           # App-level layout and styles
+│   │   ├── global.css                 # Global CSS styling
+│   │   ├── layout.tsx                 # Main layout wrapper for pages
+│   │   └── page.tsx                   # Root landing page
+│   ├── components/                    # Reusable UI components
+│   │   ├── Action_Menu.tsx            # Dropdown for user actions
+│   │   ├── Display_Automation_Code.tsx # Displays generated automation code
+│   │   ├── Display_Automation.tsx     # Shows list of automations
+│   │   ├── Display_SopName.tsx        # Shows SOP name selection
+│   │   ├── Text_Menu.tsx              # Menu for entering plain text input
+│   │   └── Xpath_Menu.tsx             # Menu for configuring XPath values
+│   └── store/                         # Redux-based state management
+│       ├── hooks.ts                   # Custom hooks for using Redux store
+│       ├── provider.tsx               # Redux provider wrapper
+│       ├── sopSlice.ts                # State slice for SOP data
+│       ├── StepSlice.ts               # State slice for step data
+│       └── store.ts                   # Store configuration
+│
+└── README.md                          # Project documentation
+
 ```              
