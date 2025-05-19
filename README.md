@@ -44,6 +44,7 @@ cd front_end
 npm next dev
 http://localhost:3000 — This is the main user interface for the application.
 ```
+![App Screenshot](images/assets/app_run.png)
 ### 2. Run Back End (Flask, Selenium, Swagger)
 ```bash
 cd back_end
@@ -57,6 +58,7 @@ python app.py data/automation_app.db
 http://localhost:5000/api/docs — This opens the Swagger UI to explore available API endpoints.
 ```
 ![App Screenshot](images/assets/swagger1.png)
+![App Screenshot](images/assets/swagger2.png)
 
 ## Project Structure
 ```bash
@@ -98,3 +100,6 @@ Selenium_project/
 └── README.md                          # Project documentation
 
 ```              
+## Demo Video
+
+👉 Watch the demo here: [YouTube Video](https://youtu.be/3eHyZe9wde4)
