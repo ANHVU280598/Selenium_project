@@ -9,8 +9,6 @@ The backend leverages Python (Flask + Selenium), and the frontend is built with 
 - [Installation](#installation)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
 
 ---
 
@@ -60,6 +58,7 @@ http://localhost:5000/api/docs — This opens the Swagger UI to explore availabl
 
 
 ## Project Structure
+```bash
 Selenium_project/
 ├── back_end/
 │   ├── data/automation_app.db
@@ -94,4 +93,5 @@ Selenium_project/
 │        ├── sopSlice.ts
 │        ├── StepSlice.ts
 │        └── store.ts          
-└── README.md                  
+└── README.md    
+```              
