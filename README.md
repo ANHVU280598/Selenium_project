@@ -9,6 +9,7 @@ The backend leverages Python (Flask + Selenium), and the frontend is built with 
 - [Installation](#installation)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
+- [Demo](#demo)
 
 ---
 
@@ -55,7 +56,7 @@ python app.py data/automation_app.db
 
 http://localhost:5000/api/docs — This opens the Swagger UI to explore available API endpoints.
 ```
-
+![App Screenshot](images/assets/swagger1.png)
 
 ## Project Structure
 ```bash
